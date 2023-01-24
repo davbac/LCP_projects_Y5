@@ -5,12 +5,10 @@ class Player:
         self.k = k
     
     def play(self, hist):
+        if(k==-1): #include the tit-for-tat in the general class
+            return hist[-1]
         return random() < self.k
- 
-class TftPlayer(Player):
-    def play(self, hist):
-        return hist[-1]
-    
+
 # so for example we can have
 
 nice_guy = Player(1)  # always cooperates
@@ -18,7 +16,7 @@ bad_guy = Player(0)   # never cooperates
 avg_guy = Player(0.5) # cooperates half the time
 mn_guy = Player(0.75) # mostly cooperates
 mb_guy = Player(0.25) # rarely cooperates
-tt_guy = TftPlayer(0) # reacts with last opponent move
+tt_guy = Player(-1) # reacts with last opponent move
 
 
 # basic mechanics for 1-on-1 game
