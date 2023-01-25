@@ -5,9 +5,15 @@ class Player:
         self.k = k
     
     def play(self, hist):
-        if k == -1: #include the tit-for-tat in the general class
+        if self.k == -1: #include the tit-for-tat in the general class
             return hist[-1]
         return random() < self.k
+    
+    def __str__(self):
+        return str(self.k)
+    
+    def __repr__(self):
+        return "Player("+str(self.k)+")"
 
 # so for example we can have
 
