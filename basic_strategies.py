@@ -19,6 +19,17 @@ class Player:
     
     def __repr__(self):
         return "Player(" + str(self.k) + ", " + str(self.t) + ")"
+    
+    def check(self):
+        if self.t > 1:
+            self.t = 1
+        if self.t < -1:
+            self.t = -1
+        if self.k > 1:
+            self.k = 1
+        if self.k < 0:
+            self.k = 0
+    
 
 # so for example we can have
 
