@@ -46,8 +46,8 @@ def repeated(N, it, cyc):
     
     return pl, hist
 
-def main():
-    pl, hist = repeated(100,100,100)
+def main(N=100, it=100, cyc=100):
+    pl, hist = repeated(N, it, cyc)
     fig, ax = plt.subplots()
     ax.set_xlim(0,1)
     ax.set_ylim(-1, 1)
