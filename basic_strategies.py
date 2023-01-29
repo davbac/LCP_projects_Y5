@@ -21,25 +21,28 @@ tt_guy = TftPlayer(-1) # reacts with last opponent move
 
 # basic mechanics for 1-on-1 game
 def game(pl1, pl2, it, payoff=(3, 2, 1, 0)):
-    hist1 = [True] # only for the correct initialization of tt_guy
-    hist2 = [True] # same
+    # initialize hists to true to correctly handle the first
+    # iteration for a tit-for-tat player (needs to cooperate on
+    # first move)
+    hist1 = [True] * it
+    hist2 = [True] * it
     points = [0, 0]
     
     for i in range(it):
         res1 = pl1.play(hist2)
         res2 = pl2.play(hist1)
-        hist1.append(res1)
-        hist2.append(res2)
-        if hist1[-1] and hist2[-1]:
+        hist1[i] = res1
+        hist2[i] = res2
+        if res1 and res2:
             points[0] += payoff[1]
             points[1] += payoff[1]
-        elif hist1[-1] and not hist2[-1]:
+        elif res1 and not res2:
             points[1] += payoff[0]
             points[0] += payoff[3]
-        elif not hist1[-1] and hist2[-1]:
+        elif not res1 and res2:
             points[1] += payoff[3]
             points[0] += payoff[0]
-        elif not hist1[-1] and not hist2[-1]:
+        else:
             points[0] += payoff[2]
             points[1] += payoff[2]
  
