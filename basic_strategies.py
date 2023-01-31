@@ -30,6 +30,15 @@ class Player:
         if self.k < 0:
             self.k = 0
     
+    def init_values(self):
+        return self.k, self.t
+    
+    def randomize(self):
+        self.k+=(2*random()-1)*0.05
+        self.t+=(2*random()-1)*0.05
+        self.check()
+        return self
+    
 
 # so for example we can have
 

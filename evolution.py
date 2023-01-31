@@ -1,33 +1,37 @@
 from basic_strategies import Player, random
 from numpy import std, mean
 
-def select(pl, scores, printing=False): ## assumes a player array and a scores array with the same length
+def select(pl, scores): ## assumes a player array and a scores array with the same length
     newpl = []
-    sc_by_type = {}
     
-    for i in range(len(pl)):
-        if pl[i].k in sc_by_type: #get all scores for each class
-            sc_by_type[pl[i].k].append(scores[i])
+    types = []
+    sc_by_type = []
+    
+    for p in pl:
+        for t in types:
+            if t[0] == p.__class__ and t[1] == p.init_values():
+                break
         else:
-            sc_by_type[pl[i].k] = [scores[i]]
+            types.append((p.__class__, p.init_values()))
     
-    for k in sc_by_type:
-        v=sc_by_type[k]
-        sc_by_type[k] = sum(v) / len(v) #average score for the class
+    for i in range(len(types)):
+        sc_by_type.append([])
+        for j in range(len(pl)):
+            if types[i][0] == pl[j].__class__ and types[i][1] == pl[j].init_values():
+                sc_by_type[i].append(scores[j])
+        sc_by_type[i]=mean(sc_by_type[i])
+        
+    glob = sorted([(types[i], sc_by_type[i]) for i in range(len(types))], key=lambda i:i[1])
+    types = [g[0] for g in glob]
+    sc_by_type = [g[1] for g in glob]
     
-    tot=sum(sc_by_type.values())
+    totscore=sum(sc_by_type)
     
-    if printing:
-        print(sc_by_type)
-    
-    for k in sc_by_type:
-        v = sc_by_type[k]
-        for i in range(int((v * len(pl)) / tot)): # determine new players' classes depending on class score
-            newpl.append(Player(k))
-    
+    for i in range(len(types)):
+        for j in range(int(len(pl) * sc_by_type[i] / totscore)):
+            newpl.append(types[i][0](*types[i][1]))
     while len(newpl) < len(pl):
-        newpl.append(Player(0.5))
-        #print("ADDED BALANCED PLAYER")
+        newpl.append(types[0][0](*types[0][1]))
     
     return newpl
 
@@ -52,12 +56,10 @@ def evolve(pl, scores, sigma_cutoff=-1):
     while len(newpl)<N:
         newpl.append(Player(best_pl.k, best_pl.t))
     
-    k, t = [], []
     for p in newpl:
+        #p.randomize()
         p.k+=(2*random()-1)*0.05
         p.t+=(2*random()-1)*0.05
         p.check()
-        k.append(p.k)
-        t.append(p.t)
     
-    return newpl, k, t    
+    return newpl
