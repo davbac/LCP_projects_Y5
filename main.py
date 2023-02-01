@@ -53,44 +53,84 @@ def repeated(N, it, cyc, classed=False):
         
         hist.append((pl, scores))
     
-    if classed:
-        pl=select(pl, scores)
-    else:
-        pl=evolve(pl, scores)
+    #if classed:
+        #pl=select(pl, scores)
+    #else:
+        #pl=evolve(pl, scores)
         
-    scores = round_robin(pl, it)
+    #scores = round_robin(pl, it)
     
-    return pl, hist
+    return hist
 
-def main(N=100, it=100, cyc=100):
-    pl, hist = repeated(N, it, cyc, True)
-    fig, ax = plt.subplots()
-    ax.set_xlim(0,1)
-    ax.set_ylim(-1, 1)
-    ax.set_xlabel("k")
-    ax.set_ylabel("t")
-    
-    col = 255 * (np.array(hist[0][1]) - min(hist[0][1])) / (max(hist[0][1]) - min(hist[0][1]))
-    rgb = mpl.colormaps["coolwarm"](col)[np.newaxis, :, :3][0]
-    
-    lines=[]
-    
-    for j in range(len(hist[0][0])):
-        k,t=hist[0][0][j].init_values()
-        line, = ax.plot(k,t, c=rgb[j], marker=".", linewidth=0)
-        lines.append(line)
-    
-    #print(lines)
-    def animate(i):
-        col = 255 * (np.array(hist[i][1]) - min(hist[i][1])) / (max(hist[i][1]) - min(hist[i][1]))
+def main(N=100, it=100, cyc=100, classed=False):
+    hist = repeated(N, it, cyc, classed)
+    if not classed:
+        fig, ax = plt.subplots()
+        ax.set_xlim(0,1)
+        ax.set_ylim(-1, 1)
+        ax.set_xlabel("k")
+        ax.set_ylabel("t")
+        
+        col = 255 * (np.array(hist[0][1]) - min(hist[0][1])) / (max(hist[0][1]) - min(hist[0][1]))
         rgb = mpl.colormaps["coolwarm"](col)[np.newaxis, :, :3][0]
-        #print(hist[i][2], col, rgb)
-        for j in range(len(lines)):
-            lines[j].set_data(hist[i][0][j].init_values())
-            lines[j].set_color(rgb[j])
-        return lines
-    ani = animation.FuncAnimation(fig, animate, interval=500, blit=True, frames=len(hist))
-    plt.show()
+        
+        lines=[]
+        
+        for j in range(len(hist[0][0])):
+            k,t=hist[0][0][j].init_values()
+            line, = ax.plot(k,t, c=rgb[j], marker=".", linewidth=0)
+            lines.append(line)
+        
+        #print(lines)
+        def animate(i):
+            col = 255 * (np.array(hist[i][1]) - min(hist[i][1])) / (max(hist[i][1]) - min(hist[i][1]))
+            rgb = mpl.colormaps["coolwarm"](col)[np.newaxis, :, :3][0]
+            #print(hist[i][2], col, rgb)
+            for j in range(len(lines)):
+                lines[j].set_data(hist[i][0][j].init_values())
+                lines[j].set_color(rgb[j])
+            return lines
+        ani = animation.FuncAnimation(fig, animate, interval=500, blit=True, frames=len(hist))
+        plt.show()
+    else:
+        fig, ax = plt.subplots(1,2)
+        cl, sc, nums = select(hist[0][0], hist[0][1], True)
+        #col = 255 * (np.array(sc) - min(sc)) / (max(sc) - min(sc))
+        col=[i for i in range(len(sc))]
+        #rgb = mpl.colormaps["coolwarm"](col)[np.newaxis, :, :3][0]
+        rgb = mpl.colormaps["tab20"](col)[np.newaxis, :, :3][0]
+        names = [str(c) for c in cl]
+        b = ax[0].bar(names, sc, color=rgb)
+        b2 = ax[1].bar(names, nums, color=rgb)
+        ax[0].set_xticks('')
+        ax[1].set_xticks('')
+        fig.legend(handles=b.get_children(), labels=names)
+        #print(names)
+        def animate(i):
+            cl, sc, nums = select(hist[i][0], hist[i][1], True)
+            new_names = [str(c) for c in cl]
+            sc_ord = []
+            num_ord = []
+            for j in range(len(names)):
+                for k in range(len(new_names)):
+                    if new_names[k] == names[j]:
+                        sc_ord.append(sc[k])
+                        num_ord.append(nums[k])
+                        break
+                else:
+                    sc_ord.append(0)
+                    num_ord.append(0)
+            
+            for j in range(len(sc_ord)):
+                b.get_children()[j].set_height(sc_ord[j])
+                b2.get_children()[j].set_height(num_ord[j])
+            #info=np.array(np.array(sc_ord)*N/sum(sc_ord)).astype(int)
+            #print(num_ord, info)
+            return *b.get_children(), *b2.get_children()
+        
+        ani = animation.FuncAnimation(fig, animate, interval=500, blit=True, frames=len(hist))
+        plt.show()
 
 if __name__ == "__main__":
-    main()
+    main(classed=True)
+    #main()

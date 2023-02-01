@@ -1,11 +1,12 @@
 from basic_strategies import Player, random
-from numpy import std, mean
+from numpy import std, mean, array
 
-def select(pl, scores): ## assumes a player array and a scores array with the same length
+def select(pl, scores, notquite=False): ## assumes a player array and a scores array with the same length
     newpl = []
     
     types = []
     sc_by_type = []
+    num_by_type = []
     
     for p in pl:
         for t in types:
@@ -19,16 +20,23 @@ def select(pl, scores): ## assumes a player array and a scores array with the sa
         for j in range(len(pl)):
             if types[i][0] == pl[j].__class__ and types[i][1] == pl[j].init_values():
                 sc_by_type[i].append(scores[j])
+        num_by_type.append(len(sc_by_type[i]))
         sc_by_type[i]=mean(sc_by_type[i])
         
-    glob = sorted([(types[i], sc_by_type[i]) for i in range(len(types))], key=lambda i:i[1])
+    
+    if notquite:
+        return types, sc_by_type, num_by_type
+    
+    glob = sorted([(types[i], sc_by_type[i]) for i in range(len(types))], key=lambda i:i[1], reverse=True)
+    
     types = [g[0] for g in glob]
     sc_by_type = [g[1] for g in glob]
     
     totscore=sum(sc_by_type)
+    new_nums = array(array(sc_by_type) * len(pl) / totscore).astype(int)
     
     for i in range(len(types)):
-        for j in range(int(len(pl) * sc_by_type[i] / totscore)):
+        for j in range(new_nums[i]):
             newpl.append(types[i][0](*types[i][1]))
     while len(newpl) < len(pl):
         newpl.append(types[0][0](*types[0][1]))
@@ -52,14 +60,14 @@ def evolve(pl, scores, sigma_cutoff=-1):
             p=newpl[j]
             newpl.append(Player(p.k, p.t))
     
-    best_pl=newpl[sorted([(newscores[i], i) for i in range(len(newscores))], key=lambda j:j[0])[0][1]]
+    best_pl=newpl[sorted([(newscores[i], i) for i in range(len(newscores))], key=lambda j:j[0], reverse=True)[0][1]]
     while len(newpl)<N:
         newpl.append(Player(best_pl.k, best_pl.t))
     
     for p in newpl:
-        #p.randomize()
-        p.k+=(2*random()-1)*0.05
-        p.t+=(2*random()-1)*0.05
-        p.check()
+        p.randomize()
+        #p.k+=(2*random()-1)*0.05
+        #p.t+=(2*random()-1)*0.05
+        #p.check()
     
     return newpl
