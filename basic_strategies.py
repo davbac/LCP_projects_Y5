@@ -7,10 +7,16 @@ class Player:
     
     def play(self, hist):
         t=random()
-        if t < self.t: #
-            return hist[-1]
+        if t < self.t: 
+            if len(hist)>0:
+                return hist[-1]
+            else:
+                return True
         elif t < -self.t:
-            return not hist[-1]
+            if len(hist)>0:
+                return not hist[-1]
+            else:
+                return False
         
         return random() < self.k
     
@@ -52,8 +58,8 @@ tt_guy = Player(0,1)   # reacts with last opponent move
 
 # basic mechanics for 1-on-1 game
 def game(pl1, pl2, it, payoff=(3, 2, 1, 0)):
-    hist1 = [True] # only for the correct initialization of tt_guy
-    hist2 = [True] # same
+    hist1 = [] 
+    hist2 = [] 
     points = [0, 0]
     
     for i in range(it):

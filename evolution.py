@@ -49,8 +49,10 @@ def evolve(pl, scores, sigma_cutoff=-1):
     
     newpl, newscores = [], []
     
+    m, s = mean(scores), std(scores)
+    
     for i in range(N):
-        if scores[i] > mean(scores) + sigma_cutoff * std(scores):
+        if scores[i] > m + sigma_cutoff * s:
             newpl.append(pl[i])
             newscores.append(scores[i])
     

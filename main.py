@@ -128,9 +128,9 @@ def main(N=100, it=100, cyc=100, classed=False):
             #print(num_ord, info)
             return *b.get_children(), *b2.get_children()
         
-        ani = animation.FuncAnimation(fig, animate, interval=500, blit=True, frames=len(hist))
+        ani = animation.FuncAnimation(fig, animate, interval=500, frames=len(hist))
         plt.show()
 
 if __name__ == "__main__":
-    main(classed=True)
+    main(classed=False)
     #main()
