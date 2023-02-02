@@ -1,4 +1,5 @@
 from numpy import sum as np_sum
+from numpy import random
 
 class SusTFT:
     def __init__(self, *args):
@@ -88,3 +89,14 @@ class HTFT:
         if len(hist) > 2:
             res = res and hist[-3]
         return res
+
+class Responsive:
+    def __init__(self,k, a):
+        self.k = k
+        self.a = a
+    
+    def init_values(self):
+        return self.k, self.a
+    
+    def play(self, hist):
+        return random.random() < self.k + self.a * ((np_sum(hist) / len(hist)) - 0.5)
