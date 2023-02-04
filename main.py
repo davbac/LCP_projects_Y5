@@ -18,7 +18,7 @@ def init(N):
 
 def init_classed(N):
     pl=[]
-    for i in range(N//6):
+    """for i in range(N//6):
         pl.append(Player(0,0))
         pl.append(Player(0.25,0))
         pl.append(Player(0.5,0))
@@ -30,7 +30,11 @@ def init_classed(N):
     
     while len(pl) < N:
         pl.append(Player(0.5,1))
-    
+    """
+    for i in range(95):
+        pl.append(Player(0.5,0))
+    for i in range(5):
+        pl.append(Player(0,1))
     return pl
 
 def repeated(N, it, cyc, classed=False):
@@ -41,6 +45,8 @@ def repeated(N, it, cyc, classed=False):
     
     hist=[]
     scores = round_robin(pl, it)
+    hist.append((pl, scores)) 
+    
     for i in range(cyc-1):
         if classed:
             pl = select(pl, scores)
@@ -52,6 +58,13 @@ def repeated(N, it, cyc, classed=False):
         scores = round_robin(pl, it)
         
         hist.append((pl, scores))
+        
+        if np.allclose(scores, hist[i][1], atol=0.00001*max(scores)) :  #aggiunta da electro
+            stop_counter += 1
+        else:
+            stop_counter = 0
+        if stop_counter == 20:
+            break
     
     #if classed:
         #pl=select(pl, scores)
@@ -61,6 +74,57 @@ def repeated(N, it, cyc, classed=False):
     #scores = round_robin(pl, it)
     
     return hist
+
+def stats(hist):
+    
+    scores=[]
+    counts=[]
+    cl, sc, nums = select(hist[0][0], hist[0][1], True)
+    names = [str(c) for c in cl]
+    
+    scores.append(sc)
+    counts.append(nums)
+    
+    for i in range(1,len(hist)):
+        cl, sc, nums = select(hist[i][0], hist[i][1], True)
+        new_names = [str(c) for c in cl]
+        
+        sc_ord = []
+        num_ord = []
+    
+        for j in range(len(names)):
+            
+            for k in range(len(new_names)):
+                if new_names[k] == names[j]:
+                        sc_ord.append(sc[k])
+                        num_ord.append(nums[k])
+                        break
+            else:
+                sc_ord.append(0)
+                num_ord.append(0)
+                
+        scores.append(sc_ord)
+        counts.append(num_ord)
+    
+    scores = np.array(scores).T
+    counts = np.array(counts).T
+   
+    means = []
+    dev = []
+    
+    
+    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(12,8))
+    for j in range(len(names)):
+        means.append( np.mean(scores[j][-20:]) )
+        dev.append( np.std(scores[j][-20:]) )
+        ax[0].plot(np.arange(0,len(hist)),scores[j], label=names[j])
+        ax[1].plot(np.arange(0,len(hist)),counts[j], label=names[j])
+        ax[0].legend()
+        
+        #print(cl[j][1],means[j],dev[j])
+    
+    plt.show()
+    return cl, means, dev
 
 def main(N=100, it=100, cyc=100, classed=False):
     hist = repeated(N, it, cyc, classed)
@@ -130,7 +194,8 @@ def main(N=100, it=100, cyc=100, classed=False):
         
         ani = animation.FuncAnimation(fig, animate, interval=500, frames=len(hist))
         plt.show()
+        stats(hist)
 
 if __name__ == "__main__":
-    main(classed=False)
+    main(classed=True)
     #main()
