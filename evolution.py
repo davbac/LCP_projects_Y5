@@ -69,12 +69,13 @@ def evolve(pl, scores, sigma_cutoff=-1):
     
     best_pl=newpl[sorted([(newscores[i], i) for i in range(len(newscores))], key=lambda j:j[0], reverse=True)[0][1]]
     while len(newpl)<N:
-        newpl.append(Player(best_pl.k, best_pl.t))
+        p=random.choice(newpl)
+        newpl.append(Player(p.k,p.t).randomize())
     
-    for p in newpl:
-        p.randomize()
+    #for p in newpl:
+        #p.randomize()
         #p.k+=(2*random()-1)*0.05
         #p.t+=(2*random()-1)*0.05
         #p.check()
-    
+        
     return newpl

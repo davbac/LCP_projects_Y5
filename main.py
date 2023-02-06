@@ -210,5 +210,5 @@ def main(N=100, it=100, cyc=100, classed=False):
         stats(hist)
 
 if __name__ == "__main__":
-    main(classed=True, N=100)
-    #main()
+    #main(classed=True, N=100)
+    main(10,10,10)
