@@ -99,4 +99,6 @@ class Responsive:
         return self.k, self.a
     
     def play(self, hist):
+        if len(hist)==0:
+            return random.random()<self.k
         return random.random() < self.k + self.a * ((np_sum(hist) / len(hist)) - 0.5)

@@ -1,6 +1,7 @@
 from basic_strategies import *
 from evolution import *
 from multi_player import *
+from additional_strategies import *
 import matplotlib.pyplot as plt 
 import matplotlib.animation as animation
 import matplotlib as mpl
@@ -18,7 +19,7 @@ def init(N):
 
 def init_classed(N):
     pl=[]
-    """for i in range(N//6):
+    for i in range(N//17):
         pl.append(Player(0,0))
         pl.append(Player(0.25,0))
         pl.append(Player(0.5,0))
@@ -27,14 +28,26 @@ def init_classed(N):
         
         pl.append(Player(0.5,1))
         pl.append(Player(0.5,-1))
+        
+        pl.append(SusTFT())
+        pl.append(Spiteful())
+        pl.append(Periodic(True, False))
+        pl.append(Periodic(True, True, False))
+        pl.append(Periodic(True, False, False))
+        pl.append(TF2T())
+        pl.append(Majority(True))
+        pl.append(Majority(False))
+        pl.append(HTFT())
+        
+        pl.append(Responsive(0.5,0.5))
     
     while len(pl) < N:
         pl.append(Player(0.5,1))
-    """
-    for i in range(95):
+    
+    """for i in range(N-5):
         pl.append(Player(0.5,0))
     for i in range(5):
-        pl.append(Player(0,1))
+        pl.append(Player(0,1))"""
     return pl
 
 def repeated(N, it, cyc, classed=False):
@@ -119,7 +132,7 @@ def stats(hist):
         dev.append( np.std(scores[j][-20:]) )
         ax[0].plot(np.arange(0,len(hist)),scores[j], label=names[j])
         ax[1].plot(np.arange(0,len(hist)),counts[j], label=names[j])
-        ax[0].legend()
+        fig.legend()
         
         #print(cl[j][1],means[j],dev[j])
     
@@ -197,5 +210,5 @@ def main(N=100, it=100, cyc=100, classed=False):
         stats(hist)
 
 if __name__ == "__main__":
-    main(classed=True)
+    main(classed=True, N=500)
     #main()
