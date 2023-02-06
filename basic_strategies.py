@@ -7,9 +7,31 @@ class Player:
     def play(self, hist):
         return random()<self.k
     
+<<<<<<< Updated upstream
 class TftPlayer(Player):
     def play(self, hist):
         return hist[-1]
+=======
+
+    #def __str__(self):
+        #return str(self.k) + str(self.t)
+    
+    def __name__(self):
+        return rf"$k = {self.k:.2f}$, $t = {self.t:.2f}$"
+    
+    def check(self):
+        if self.t > 1:
+            self.t = 1
+        if self.t < -1:
+            self.t = -1
+        if self.k > 1:
+            self.k = 1
+        if self.k < 0:
+            self.k = 0
+    
+    def init_values(self):
+        return self.k, self.t
+>>>>>>> Stashed changes
     
     
 # so for example we can have
