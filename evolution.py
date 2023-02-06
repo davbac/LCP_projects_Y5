@@ -1,5 +1,6 @@
-from basic_strategies import Player, random
-from numpy import std, mean, array, ones
+from basic_strategies import Player
+from numpy import std, mean, array, ones, random
+
 
 def select(pl, scores, notquite=False): ## assumes a player array and a scores array with the same length
     newpl = []
@@ -70,10 +71,10 @@ def evolve(pl, scores, sigma_cutoff=-1):
     best_pl=newpl[sorted([(newscores[i], i) for i in range(len(newscores))], key=lambda j:j[0], reverse=True)[0][1]]
     while len(newpl)<N:
         p=random.choice(newpl)
-        newpl.append(Player(p.k,p.t).randomize())
+        newpl.append(Player(p.k,p.t))
     
-    #for p in newpl:
-        #p.randomize()
+    for p in newpl:
+        p.randomize()
         #p.k+=(2*random()-1)*0.05
         #p.t+=(2*random()-1)*0.05
         #p.check()
