@@ -1,5 +1,5 @@
 from basic_strategies import Player, random
-from numpy import std, mean, array
+from numpy import std, mean, array, ones
 
 def select(pl, scores, notquite=False): ## assumes a player array and a scores array with the same length
     newpl = []
@@ -27,13 +27,18 @@ def select(pl, scores, notquite=False): ## assumes a player array and a scores a
     if notquite:
         return types, sc_by_type, num_by_type
     
-    glob = sorted([(types[i], sc_by_type[i]) for i in range(len(types))], key=lambda i:i[1], reverse=True)
+    glob = sorted([(types[i], sc_by_type[i], num_by_type[i]) for i in range(len(types))], key=lambda i:i[1], reverse=True)
     
     types = [g[0] for g in glob]
     sc_by_type = [g[1] for g in glob]
+    num_by_type = [g[2] for g in glob]
     
     totscore=sum(sc_by_type)
-    new_nums = array(array(sc_by_type) * len(pl) / totscore).astype(int)
+    N = len(pl)
+    #print(types, '\n',  sc_by_type, '\n', num_by_type) 
+    mu = sum(array(num_by_type)*array(sc_by_type))/N
+    
+    new_nums = array( num_by_type + array(num_by_type)*(sc_by_type-mu*ones(len(sc_by_type)))/mu ).astype(int)
     
     for i in range(len(types)):
         for j in range(new_nums[i]):
@@ -49,8 +54,10 @@ def evolve(pl, scores, sigma_cutoff=-1):
     
     newpl, newscores = [], []
     
+    m, s = mean(scores), std(scores)
+    
     for i in range(N):
-        if scores[i] > mean(scores) + sigma_cutoff * std(scores):
+        if scores[i] > m + sigma_cutoff * s:
             newpl.append(pl[i])
             newscores.append(scores[i])
     
